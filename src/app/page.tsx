@@ -107,29 +107,31 @@ export default function MuseDinnerQuestions() {
               ))}
             </div>
           )}
-          {gameState === "questions" && (
-            <>
-              <Select
-                onValueChange={(value) =>
-                  setSelectedCategory(value as Category)
-                }
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(questionsData).map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-lg mb-6 text-center">
-                {questions[currentQuestion]}
-              </p>
-            </>
-          )}
+          <div className="flex justify-center items-center gap-5 flex-col">
+            {gameState === "questions" && (
+              <>
+                <Select
+                  onValueChange={(value) =>
+                    setSelectedCategory(value as Category)
+                  }
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(questionsData).map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-lg mb-6 text-center">
+                  {questions[currentQuestion]}
+                </p>
+              </>
+            )}
+          </div>
         </CardContent>
         <CardFooter className="flex justify-center">
           {gameState === "start" && (
