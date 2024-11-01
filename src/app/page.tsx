@@ -22,6 +22,8 @@ import {
 // Assume this import works as it's in the project structure you provided earlier
 import questionsData from "../app/data/data.json";
 
+type Category = keyof typeof questionsData;
+
 function shuffleArray(array: any[]) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -35,7 +37,7 @@ export default function MuseDinnerQuestions() {
   const [players, setPlayers] = useState(["", "", "", ""]);
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<Category | "">("");
 
   useEffect(() => {
     if (selectedCategory) {
@@ -105,27 +107,29 @@ export default function MuseDinnerQuestions() {
               ))}
             </div>
           )}
-          <div className="flex flex-col gap-5 justify-center items-center">
-            {gameState === "questions" && (
-              <>
-                <Select onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.keys(questionsData).map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-lg mb-6 text-center">
-                  {questions[currentQuestion]}
-                </p>
-              </>
-            )}
-          </div>
+          {gameState === "questions" && (
+            <>
+              <Select
+                onValueChange={(value) =>
+                  setSelectedCategory(value as Category)
+                }
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.keys(questionsData).map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-lg mb-6 text-center">
+                {questions[currentQuestion]}
+              </p>
+            </>
+          )}
         </CardContent>
         <CardFooter className="flex justify-center">
           {gameState === "start" && (
