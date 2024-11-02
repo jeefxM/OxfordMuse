@@ -11,13 +11,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ChevronRight, RefreshCw } from "lucide-react";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 // Assume this import works as it's in the project structure you provided earlier
-import questionsData from "../app/data/data.json";
+import questionsData from "../../app/data/data.json";
 
-function flattenQuestions(data: Record<string, string[]>): string[] {
-  return Object.values(data).flat();
-}
+type Category = keyof typeof questionsData;
 
 function shuffleArray(array: any[]) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -32,11 +37,13 @@ export default function MuseDinnerQuestions() {
   const [players, setPlayers] = useState(["", "", "", ""]);
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<Category | "">("");
 
   useEffect(() => {
-    const allQuestions = flattenQuestions(questionsData);
-    setQuestions(shuffleArray(allQuestions));
-  }, []);
+    if (selectedCategory) {
+      setQuestions(shuffleArray([...questionsData[selectedCategory]]));
+    }
+  }, [selectedCategory]);
 
   const startGame = () => {
     setGameState("names");
@@ -58,8 +65,10 @@ export default function MuseDinnerQuestions() {
   };
 
   const shuffleQuestions = () => {
-    setQuestions(shuffleArray([...questions]));
-    setCurrentQuestion(0);
+    if (selectedCategory) {
+      setQuestions(shuffleArray([...questionsData[selectedCategory]]));
+      setCurrentQuestion(0);
+    }
   };
 
   const nextQuestion = () => {
@@ -98,11 +107,31 @@ export default function MuseDinnerQuestions() {
               ))}
             </div>
           )}
-          {gameState === "questions" && (
-            <p className="text-lg mb-6 text-center">
-              {questions[currentQuestion]}
-            </p>
-          )}
+          <div className="flex justify-center items-center gap-5 flex-col">
+            {gameState === "questions" && (
+              <>
+                <Select
+                  onValueChange={(value) =>
+                    setSelectedCategory(value as Category)
+                  }
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(questionsData).map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-lg mb-6 text-center">
+                  {questions[currentQuestion]}
+                </p>
+              </>
+            )}
+          </div>
         </CardContent>
         <CardFooter className="flex justify-center">
           {gameState === "start" && (
